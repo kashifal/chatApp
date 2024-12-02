@@ -1,11 +1,20 @@
 import axios from 'axios'
 
 const getBaseUrl = () => {
-  const port = localStorage.getItem('apiPort'); // Default fallback port
-  return `${port}`;
+  return localStorage.getItem('apiUrl') || 'http://javaprojects.ch:50001';
 };
 
-const api = axios.create({
+const updateBaseUrl = () => {
+  const url = localStorage.getItem('apiUrl');
+  if (url) {
+    api.defaults.baseURL = url;
+  }
+};
+
+// Reduce polling frequency to something more reasonable
+setInterval(updateBaseUrl, 0); // Check every 2 minutes
+
+export const api = axios.create({
   baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json'

@@ -2,11 +2,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { authService, chatService } from '../services/api'
+import { authService, chatService, api } from '../services/api'
  
 
 const port = ref(false);
-const portInput = ref('');
+const urlInput = ref('')
+const ping = ref(false)
 
 const router = useRouter()
 const username = ref('')
@@ -68,31 +69,46 @@ async function handleSignup() {
   }
 }
 
-const ping = ref(false);
-async function handlePortSubmit() {
-  localStorage.setItem('apiPort', portInput.value);
- 
+async function handleUrlSubmit() {
+  try {
+    // Validate URL
+    new URL(urlInput.value); // This will throw if URL is invalid
+    
+    // Store the full URL
+    localStorage.setItem('apiUrl', urlInput.value);
+    
+    // Update API base URL
+    api.defaults.baseURL = urlInput.value;
 
-  const response =  await chatService.getPing();
-  console.log(response);
-  ping.value = response.data.ping;
-  if(ping.value){
-    router.push('/login');
-    port.value = true;
+    // Test connection
+    const response = await chatService.getPing();
+    ping.value = response.data.ping;
+    if(ping.value) {
+      port.value = true;
+    }
+  } catch (error) {
+    console.error('Invalid URL or connection failed:', error);
+    ping.value = false;
   }
 }
 </script>
 
 <template>
  
-  <div   :class="[ping ? 'min-h-screen border-2 border-green-500 flex items-center justify-center bg-gray-50' : 'min-h-screen border-2 border-red-500 flex items-center justify-center bg-gray-50']">
+  <div   :class="[ping ? 'min-h-screen flex flex-col border-8 border-green-500 flex items-center justify-center gap-4 bg-gray-50' : 'min-h-screen flex flex-col  gap-4 border-8 border-red-500 flex items-center justify-center bg-gray-50']">
 
-    <div v-if="!port" class="flex max-w-2xl w-full gap-2 rounded-lg justify-center p-12 bg-white flex flex-col items-center">
+    <div   class="flex max-w-2xl w-full gap-2 rounded-lg justify-center p-12 bg-white flex flex-col items-center">
       <h2 class="text-center text-3xl font-extrabold p-3 text-gray-900">Port <small class="text-gray-500 font-normal text-sm">(Example: 50001)</small></h2>
-      <input type="text" placeholder="Enter Port" required class="bg-gray-100 max-w-2xl px-6 py-2 w-full rounded-lg" v-model="portInput" name="" id="">
-      <button :disabled="!portInput" @click="handlePortSubmit" :class="portInput ? 'bg-indigo-600 text-white px-4 py-2 rounded-lg' : 'bg-gray-300 cursor-not-allowed text-gray-600 px-4 py-2 rounded-lg'  ">Enter Port</button>
+      <input 
+      class="py-2 px-4 bg-gray-100 w-full rounded-md"
+        v-model="urlInput"
+        type="text"
+        placeholder="Enter API URL (e.g., http://javaprojects.ch:50001)"
+      />
+      <button class="bg-indigo-600 py-2 px-4 rounded-md text-white" @click="handleUrlSubmit">Connect</button>
+      <p>Port is {{ ping ? 'online' : 'offline' }}</p>
     </div>
-    <div v-else class="max-w-6xl w-full   p-8  rounded-lg grid gap-12 grid-cols-2 shadow">
+    <div  class="max-w-6xl w-full   p-8  rounded-lg grid gap-12 grid-cols-2 shadow">
       <div class="bg-white p-8 rounded-lg">
         <h2 class="text-center text-3xl font-extrabold pb-12 text-gray-900">Sign in</h2>
       
