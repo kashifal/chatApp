@@ -1,0 +1,77 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "u1",
+      "password": "save",
+      "token": "77CB76BB1EFE56D9285330BD6395B4EA",
+      "online": true
+    },
+    {
+      "id": 2,
+      "username": "u2",
+      "password": "save",
+      "token": "19764FEA26CC5AA138F85A3E83D2364F",
+      "online": false
+    },
+    {
+      "id": 3,
+      "username": "u3",
+      "password": "save",
+      "token": "08962E7B7AB4422B49D78C4FCD84F7DB",
+      "online": true
+    }
+  ],
+  "chatrooms": [
+    {
+      "id": 1,
+      "name": "Chatroom1",
+      "creator": "u1",
+      "members": ["u1", "u2"]
+    },
+    {
+      "id": 2,
+      "name": "Chatroom2",
+      "creator": "u2",
+      "members": ["u2", "u3"]
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "sender": "u1",
+      "recipient": "u2",
+      "message": "Privat",
+      "timestamp": "2024-03-19T10:00:00Z",
+      "chatroomId": null
+    },
+    {
+      "id": 2,
+      "sender": "u2",
+      "recipient": null,
+      "message": "Hallo Chatroom!",
+      "timestamp": "2024-03-19T10:01:00Z",
+      "chatroomId": 2
+    }
+  ],
+  "books": [
+    {
+      "id": 1,
+      "title": "Starting with Programming",
+      "author": "John Doe",
+      "price": 29.99
+    },
+    {
+      "id": 2,
+      "title": "Advanced Programming",
+      "author": "Jane Smith",
+      "price": 39.99
+    },
+    {
+      "id": 3,
+      "title": "The Art of Code",
+      "author": "Bob Wilson",
+      "price": 24.99
+    }
+  ]
+} 
