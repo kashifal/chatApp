@@ -1,7 +1,12 @@
 import axios from 'axios'
 
+const getBaseUrl = () => {
+  const port = localStorage.getItem('apiPort'); // Default fallback port
+  return `${port}`;
+};
+
 const api = axios.create({
-  baseURL: 'http://localhost:50001',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json'
   }
@@ -20,9 +25,10 @@ export const authService = {
 
 export const chatService = {
   // Single Chat
-  sendMessage: (token: string, username: string, message: string) =>
-    api.post('/chat/send', { token, username, message }),
-    
+  sendMessage: (token: string, username: string, message: string) => {
+    console.log('Sending message to:', username,token,message)
+    return api.post('/chat/send', { token, username, message })
+  },
   pollMessages: (token: string) =>
     api.post('/chat/poll', { token }),
 
@@ -43,12 +49,15 @@ export const chatService = {
     api.post('/chatroom/leave', { token, chatroomId }),
     
   getGroupMembers: (token: string, chatroomId: number) =>
-    api.post('/chatroom/users', { token, chatroomId })
+    api.post('/chatroom/users', { token, chatroomId }),
+
+  getPing: () =>
+    api.get('/ping')
 }
 
 export const userService = {
   getAllUsers: () => 
-    api.get('/users'),
+    api.get('/users/online'),
     
   getOnlineUsers: () => 
     api.get('/users/online')

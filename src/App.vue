@@ -8,7 +8,7 @@ const authStore = useAuthStore()
 
 // Check for existing token in localStorage on app mount
 onMounted(() => {
-  const savedToken = localStorage.getItem('token')
+  const savedToken = localStorage.getItem('userToken')
   const savedUsername = localStorage.getItem('username')
   if (savedToken && savedUsername) {
     authStore.setAuth(savedToken, savedUsername)

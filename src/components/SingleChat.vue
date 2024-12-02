@@ -10,10 +10,12 @@ const message = ref('')
 const messages = ref<Array<{ from: string; message: string }>>([])
 let pollInterval: number
 
+
 onMounted(async () => {
   try {
     const response = await userService.getAllUsers()
-    users.value = response.data.filter((user: string) => user !== authStore.username)
+    console.log(response.data.online)
+    users.value = response.data.online.filter((user: string) => user !== authStore.username)
     startPolling()
   } catch (err) {
     console.error('Failed to fetch users:', err)
@@ -26,6 +28,7 @@ onUnmounted(() => {
 
 function startPolling() {
   pollInterval = setInterval(async () => {
+    //response example {messages: [{message: 'Hi', username: 'kashif' }]}
     try {
       const response = await chatService.pollMessages(authStore.token!)
       if (response.data.messages) {
@@ -41,11 +44,25 @@ async function sendMessage() {
   if (!message.value || !selectedUser.value) return
   
   try {
-    await chatService.sendMessage(
+    const response = await chatService.sendMessage(
       authStore.token!,
-      selectedUser.value,
+      selectedUser.value, 
       message.value
     )
+    console.log('Send message response:', response)
+    
+    if (response.data.send) {
+      // Add message to messages array with correct sender
+      const newMessage = {
+        from: authStore.username,
+        message: message.value
+      }
+      messages.value.push(newMessage)
+      
+      // Store messages in localStorage
+      localStorage.setItem('chatMessages', JSON.stringify(messages.value))
+    }
+    
     message.value = ''
   } catch (err) {
     console.error('Failed to send message:', err)
@@ -55,6 +72,7 @@ async function sendMessage() {
 
 <template>
   <div class="h-full flex flex-col">
+    
     <div class="mb-4">
       <select
         v-model="selectedUser"
@@ -77,7 +95,8 @@ async function sendMessage() {
               : 'bg-gray-200'
           ]"
         >
-          <p class="text-sm font-bold">{{ msg.from }}</p>
+          <div class="rounded-full my-2 h-8 w-8 flex items-center justify-center bg-gray-300 text-gray-600 text-xs">{{ msg.username }}</div>
+         
           <p>{{ msg.message }}</p>
         </div>
       </div>
