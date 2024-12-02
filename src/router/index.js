@@ -25,7 +25,7 @@ const routes = [
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    meta: { requiresAuth: false }
+   
   }
 ]
 
@@ -41,7 +41,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } else if (to.path === '/login' && isAuthenticated) {
+  } else if ((to.path === '/login' || to.path === '/signup') && isAuthenticated) {
     next('/chat')
   } else {
     next()
