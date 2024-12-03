@@ -37,8 +37,8 @@ async function handleSignup() {
   }
 
   try {
-    const port = localStorage.getItem('apiPort') || '50001';
-    const response = await fetch(`http://javaprojects.ch:${port}/user/register`, {
+    const port = localStorage.getItem('apiUrl') || '50001';
+    const response = await fetch(port+'/user/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

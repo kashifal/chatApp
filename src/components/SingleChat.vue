@@ -12,13 +12,22 @@ let pollInterval: number
 
 
 onMounted(async () => {
+  const fetchUsers = async () => {
+    try {
+      const response = await userService.getAllUsers()
+      console.log(response.data.online)
+      users.value = response.data.online.filter((user: string) => user !== authStore.username)
+    } catch (err) {
+      console.error('Failed to fetch users:', err)
+    }
+  }
+
   try {
-    const response = await userService.getAllUsers()
-    console.log(response.data.online)
-    users.value = response.data.online.filter((user: string) => user !== authStore.username)
+    await fetchUsers()
     startPolling()
+    setInterval(fetchUsers, 1000)
   } catch (err) {
-    console.error('Failed to fetch users:', err)
+    console.error('Failed to fetch users:', err) 
   }
 })
 
